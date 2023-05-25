@@ -1,26 +1,211 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-absolute bg-transparent shadow-none">
+      <div class="container">
+        <h1 class="navbar-brand text-white" href="javascript:;">Accuenergy Canada Inc</h1>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbar-header-2"
+          aria-controls="navbar-header-2"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-header-2">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+              <RouterLink class="nav-link text-white" to="#">Pre-Interview Code</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link text-white" to="#">For</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link text-white" to="#">Web developer</RouterLink>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link text-white" href="https://twitter.com/CreativeTim">
+                <i class="fab fa-twitter"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white mx-2" href="https://www.facebook.com/CreativeTim">
+                <i class="fab fa-facebook"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link text-white"
+                href="https://www.instagram.com/CreativeTimOfficial"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div
+      class="page-header min-vh-100"
+      :style="{
+        backgroundImage: 'url(https://images.unsplash.com/photo-1520769945061-0a448c463865?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80)',
+      }"
+      loading="lazy"
+    >
+      <span class="mask bg-gradient-dark opacity-5"></span>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-7 d-flex justify-content-center flex-column">
+            <!-- <h1 class="text-white mb-4">Material Kit</h1> -->
+            <p class="text-white opacity-8 lead pe-5 me-5">
+              Check your current location<br> by click the button!
+            </p>
+            <div class="buttons">
+              <el-button type="primary" class="mt-4" @click="getCurrentLocation">Get Current Location</el-button>
+              <!-- <el-button type="text" class="text-white shadow-none mt-4">Read more</el-button> -->
+              <p class="text-white opacity-20" v-if="currentLatitude && currentLongitude">
+                <br>Your Current Location:<br> Latitude is {{ currentLatitude }}, Longitude is {{ currentLongitude }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="container">
+        <input v-model="searchInput" @keydown.enter="searchLocation" placeholder="Search location">
+        <el-button type="primary" class="mt-4" @click="searchLocation">Get Location information</el-button>
+        <div>
+          <el-button type="primary" @click="getCurrentLocation">Get Location</el-button>
+          <input v-model="searchInput" @keydown.enter="searchLocation" placeholder="Search location">
+          <p v-if="currentLatitude && currentLongitude">
+            Current Location: {{ currentLatitude }}, {{ currentLongitude }}
+          </p>
+          Display map and markers here
+          <el-table :data="searchedPlaces" :row-key="getRowKey" v-if="searchedPlaces.length > 0">
+            <el-table-column type="selection"></el-table-column>
+            <el-table-column prop="name" label="Name"></el-table-column>
+             Add more columns as needed 
+          </el-table>
+          <el-pagination
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :total="searchedPlaces.length"
+            @current-change="handlePageChange"
+          ></el-pagination>
+          <div v-if="latestLocation">
+            <p>Time Zone: {{ latestLocation.timezone }}</p>
+            <p>Local Time: {{ latestLocation.localTime }}</p>
+          </div>
+          <button @click="deleteSelected">Delete Selected</button>
+        </div>
+      </div> -->
+    </div>
+  </header>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import {  ElButton } from 'element-plus';
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    ElButton,
+  },
+  data() {
+    return {
+      searchedPlaces: [],
+      searchInput: '',
+      currentPage: 1,
+      pageSize: 10,
+      latestLocation: null,
+      currentLatitude: null,
+      currentLongitude: null,
+    };
+  },
+  methods: {
+    getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.currentLatitude = position.coords.latitude;
+            this.currentLongitude = position.coords.longitude;
+          },
+          (error) => {
+            console.error('Error getting current position:', error);
+          }
+        );
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    },
+    searchLocation() {
+    //   const apiKey = 'YOUR_API_KEY'; // Replace with your Google Maps API key
+    //   const searchText = this.searchText;
+
+    //   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(searchText)}&key=${apiKey}`;
+
+    //   axios
+    //     .get(url)
+    //     .then(response => {
+    //       const results = response.data.results;
+
+    //       if (results.length > 0) {
+    //         const result = results[0];
+    //         const { lat, lng } = result.geometry.location;
+    //         const location = result.formatted_address;
+
+    //         // Create a new place object with the acquired data
+    //         const newPlace = {
+    //           id: generateUniqueId(), // Replace with your unique ID generation logic
+    //           latitude: lat,
+    //           longitude: lng,
+    //           location: location,
+    //           timeZone: '', // Replace with the appropriate time zone information
+    //           localTime: '' // Replace with the appropriate local time information
+    //         };
+
+    //         // Add the new place to the places array
+    //         this.places.push(newPlace);
+
+    //         // Add a marker to the map for the searched location
+    //         this.addMarkerToMap(newPlace);
+    //       } else {
+    //         console.log('No results found');
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.error('Error searching for location:', error);
+    //     });
+    // },
+    // getRowKey(row) {
+    //   return row.id; // Replace with the actual unique identifier for each row
+    // },
+    // handlePageChange(currentPage) {
+    //   this.currentPage = currentPage;
+    },
+    getRowKey(row) {
+      return row.id; // Replace with the actual unique identifier for each row
+    },
+    handlePageChange(currentPage) {
+      this.currentPage = currentPage;
+    },
+    deleteSelected() {
+      // const selectedRows = this.$refs.table.selection;
+      // if (selectedRows.length === 0) {
+      //   ElMessage.warning('Please select at least one record.');
+      //   return;
+      }
+
+      // Implement logic to remove selected records and their markers
+      // Update searchedPlaces array accordingly
+    },
+  };
+
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+/* Add your custom styles here */
 </style>
